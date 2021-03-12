@@ -1,0 +1,10 @@
+[tools]
+"aqua:azu/dockerfile-pin" = "latest"
+claude = "latest"
+pinact = "latest"
+
+[tasks.validate-autoinstall]
+run = "docker run --rm -it -v ./docs/autoinstall.yaml:/autoinstall.yaml ghcr.io/eggplants/validate-ubuntu-autoinstall-docker /autoinstall.yaml -v"
+
+[tasks.pre-commit]
+depends = ["validate-autoinstall"]
