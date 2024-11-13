@@ -328,7 +328,7 @@ is_desktop && {
 
 # git
 [[ -f ~/.gitconfig ]] || {
-  gh auth login
+  gh auth login -p https -h gitHub.com -w <<<y
   git config --global commit.gpgsign true
   git config --global core.editor nano
   git config --global gpg.program "$(which gpg)"
