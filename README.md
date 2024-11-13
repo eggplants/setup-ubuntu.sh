@@ -1,9 +1,9 @@
-# my-ubuntu-setup
+# My setup script for Ubuntu
 
 A setup script for Ubuntu on PC
 
 ## Run
 
 ```bash
-./ubuntu-setup.sh
+./setup-ubuntu.sh
 ```
