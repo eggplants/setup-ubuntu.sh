@@ -327,6 +327,10 @@ is_desktop && {
 # git
 [[ -f ~/.gitconfig ]] || {
   gh auth login -p https -h gitHub.com -w <<<y
+  git_email="$(
+    gpg --list-keys | grep -Em1 '^uid' |
+      rev | cut -f1 -d ' ' | tr -d '<>' | rev
+  )"
   git config --global commit.gpgsign true
   git config --global core.editor nano
   git config --global gpg.program "$(which gpg)"
