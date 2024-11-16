@@ -81,8 +81,6 @@ then
     curl -s "https://docs.docker.com/desktop/release-notes/" | grep -oEm1 'https://[^<]+>Debian</a>' | cut -d'>' -f1
   )"
   sudo apt install -y ./docker-desktop-amd64.deb
-  # https://github.com/docker/desktop-linux/issues/209#issuecomment-2083540338
-  echo 'kernel.apparmor_restrict_unprivileged_userns = 0' | sudo tee -a /etc/sysctl.d/60-apparmor-namespace.conf
 elif command -v wsl.exe &>/dev/null
 then
   powershell.exe /c winget.exe install Docker.DockerDesktop || :
