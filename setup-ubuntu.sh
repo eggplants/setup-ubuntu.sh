@@ -354,13 +354,17 @@ is_desktop && {
              "runcat@kolesnikov.se"
 }
 
-# zinit
-curl -s https://raw.githubusercontent.com/zdharma-continuum/zinit/HEAD/scripts/install.sh | bash
+# sheldon
+curl --proto '=https' -fLsS https://rossmacarthur.github.io/install/crate.sh |
+  bash -s -- --repo rossmacarthur/sheldon --to ~/.local/
+sheldon init --shell zsh <<<y
+sheldon add --github zdharma/fast-syntax-highlighting fast-syntax-highlighting
+sheldon add --github zdharma-continuum/history-search-multi-word history-search-multi-word
+sheldon add --github zsh-users/zsh-autosuggestions zsh-autosuggestions
+sheldon add --github zsh-users/zsh-completions zsh-completions
+
 cat <<'A' >>~/.zshrc
-zinit light zdharma-continuum/fast-syntax-highlighting
-zinit light zdharma-continuum/history-search-multi-word
-zinit light zsh-users/zsh-autosuggestions
-zinit light zsh-users/zsh-completions
+eval "$(sheldon source)"
 
 # if (which zprof > /dev/null) ;then
 #   zprof | less
@@ -376,11 +380,6 @@ cat <<'A' >.zshrc.tmp
 [[ -f ~/.zprofile ]] && source ~/.zprofile
 
 # completion
-autoload -U compinit
-if [ "$(find ~/.zcompdump -mtime 1)" ] ; then
-    compinit -u
-fi
-compinit -uC
 zstyle ':completion:*' menu select
 
 # enable opts
