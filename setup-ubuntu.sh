@@ -110,7 +110,7 @@ is_desktop && {
 }
 
 # import key
-gpg --list-keys | grep -q EE38 || {
+gpg --list-keys | grep -qE '^ *EE3A' || {
   export GPG_TTY="$(tty)"
   export SSH_AUTH_SOCK="$(gpgconf --list-dirs agent-ssh-socket)"
   echo "pinentry-program $(which pinentry-tty)" > ~/.gnupg/gpg-agent.conf
