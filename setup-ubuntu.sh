@@ -74,26 +74,23 @@ is_desktop && {
 # sudo ln -s /usr/share/OVMF/OVMF_CODE_4M.fd /usr/share/OVMF/OVMF_CODE.fddock
 
 # docker
-if is_desktop
-then
-  # docker desktop
-  wget "$(
-    curl -s "https://docs.docker.com/desktop/release-notes/" | grep -oEm1 'https://[^<]+>Debian</a>' | cut -d'>' -f1
-  )"
-  sudo apt install -y ./docker-desktop-amd64.deb
-elif command -v wsl.exe &>/dev/null
+if command -v wsl.exe &>/dev/null
 then
   powershell.exe /c winget.exe install Docker.DockerDesktop || :
 else
-  # docker engine
+  # Add Docker's official GPG key:
+  sudo apt-get update
+  sudo apt-get install ca-certificates curl
+  sudo install -m 0755 -d /etc/apt/keyrings
   sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
   sudo chmod a+r /etc/apt/keyrings/docker.asc
-  echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu $(
-    . /etc/os-release && echo "$VERSION_CODENAME"
-  ) stable" |
-  sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-  sudo apt -y update
-  sudo apt -y install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+  
+  # Add the repository to Apt sources:
+  echo \
+    "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
+    $(. /etc/os-release && echo "${UBUNTU_CODENAME:-$VERSION_CODENAME}") stable" | \
+    sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+  sudo apt install -U docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 fi
 
 # google chrome
