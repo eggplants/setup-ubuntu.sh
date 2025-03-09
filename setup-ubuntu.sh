@@ -30,7 +30,7 @@ is_desktop && {
 sudo apt update -y
 sudo apt upgrade -y
 sudo apt install -y \
-  byobu curl ca-certificates ffmpeg git \
+  byobu curl ca-certificates ffmpeg git gnupg2 \
   imagemagick jq network-manager-l2tp pass \
   pinentry-tty pkg-config unar vlc w3m wget zsh
 sudo install -m 0755 -d /etc/apt/keyrings
