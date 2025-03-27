@@ -110,8 +110,16 @@ is_desktop && {
 gpg --list-keys | grep -qE '^ *EE3A' || {
   export GPG_TTY="$(tty)"
   export SSH_AUTH_SOCK="$(gpgconf --list-dirs agent-ssh-socket)"
-  echo "pinentry-program $(which pinentry-tty)" > ~/.gnupg/gpg-agent.conf
-  echo enable-ssh-support >> ~/.gnupg/gpg-agent.conf
+  if is_desktop; then
+    echo "pinentry-program $(which pinentry-gnome3)" > ~/.gnupg/gpg-agent.conf
+  else
+    echo "pinentry-program $(which pinentry-tty)" > ~/.gnupg/gpg-agent.conf
+  fi
+  cat <<'A' >> ~/.gnupg/gpg-agent.conf
+enable-ssh-support
+default-cache-ttl 34560000
+max-cache-ttl 34560000
+A
   touch ~/.gnupg/sshcontrol
   chmod 600 ~/.gnupg/*
   chmod 700 ~/.gnupg
