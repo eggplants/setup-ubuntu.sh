@@ -224,6 +224,7 @@ is_desktop && {
   )
 
   sudo update-alternatives --install /usr/bin/x-terminal-emulator x-terminal-emulator /usr/local/bin/alacritty 50
+  gsettings set org.gnome.desktop.default-applications.terminal exec "$(which alacritty)"
 
   mkdir -p ~/.config/alacritty
   curl -o- 'https://codeload.github.com/alacritty/alacritty-theme/tar.gz/refs/heads/master' |
