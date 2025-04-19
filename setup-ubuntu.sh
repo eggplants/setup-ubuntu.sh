@@ -211,7 +211,7 @@ is_desktop && {
   curl -o- 'https://codeload.github.com/alacritty/alacritty-theme/tar.gz/refs/heads/master' |
     tar xzf - alacritty-theme-master/themes
   mv alacritty-theme-master ~/.config/alacritty
-  echo 'import = [' >> ~/.config/alacritty/alacritty.toml
+  echo $'[general]\nimport = [' >> ~/.config/alacritty/alacritty.toml
   find ~/.config/alacritty/alacritty-theme-master/themes -type f -name '*toml' |
     sed 's/^.*/  # "&",/' >> ~/.config/alacritty/alacritty.toml
   echo ']' >> ~/.config/alacritty/alacritty.toml
