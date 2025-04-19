@@ -171,7 +171,7 @@ eval "$($HOME/.local/bin/mise activate ${SHELL/*\/})"
 # }
 
 # python
-[[ -d ~/.pyenv ]] || {
+command -v python 2>/dev/null || {
   mise use --global python@latest
   pip install pipx
   pipx ensurepath
@@ -180,8 +180,9 @@ eval "$($HOME/.local/bin/mise activate ${SHELL/*\/})"
 }
 
 # ruby
-[[ -d ~/.rbenv ]] || {
-  mise use --global ruby@latest
+command -v ruby 2>/dev/null || {
+  sudo apt install -y gcc make
+  CC=gcc mise use --global ruby@latest
 }
 
 # node
