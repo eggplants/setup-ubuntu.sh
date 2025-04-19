@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# FOR Ubuntu 24.04 noble
+# FOR Ubuntu 25.04 plucky
 
 set -eux
 
@@ -91,6 +91,9 @@ else
     $(. /etc/os-release && echo "${UBUNTU_CODENAME:-$VERSION_CODENAME}") stable" | \
     sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
   sudo apt install -U docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+  sudo groupadd docker
+  sudo usermod -aG docker $USER
+  newgrp docker
 fi
 
 # google chrome
