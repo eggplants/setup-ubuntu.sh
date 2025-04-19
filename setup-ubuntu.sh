@@ -162,7 +162,7 @@ A
 curl https://mise.run | sh
 echo 'eval "$($HOME/.local/bin/mise activate bash)"' >>~/.bashrc
 echo 'eval "$($HOME/.local/bin/mise activate zsh)"' >>~/.zshrc
-eval "$($HOME/.local/bin/mise activate zsh)"
+eval "$($HOME/.local/bin/mise activate ${SHELL/*\/})"
 
 # steam
 # is_desktop && {
@@ -176,8 +176,7 @@ eval "$($HOME/.local/bin/mise activate zsh)"
   pip install pipx
   pipx ensurepath
   export PATH="$HOME/.local/bin:$PATH"
-  pipx install getjump poetry yt-dlp
-  poetry self add poetry-version-plugin
+  pipx install getjump yt-dlp
 }
 
 # ruby
