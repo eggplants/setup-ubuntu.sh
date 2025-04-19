@@ -204,9 +204,24 @@ source ~/.cargo/env
 
 # alacritty
 is_desktop && {
-  cargo install alacritty
-  sudo update-alternatives --install /usr/bin/x-terminal-emulator \
-    x-terminal-emulator ~/.cargo/bin/alacritty 50
+  apt install -y \
+    cmake g++ pkg-config libfreetype6-dev libfontconfig1-dev libxcb-xfixes0-dev libxkbcommon-dev
+  (
+    git clone --depth 1 -b graphics --single-branch https://github.com/ayosec/alacritty
+    cd alacritty
+    cargo build --release
+
+    sudo tic -xe alacritty,alacritty-direct ./extra/alacritty.info
+    infocmp alacritty || sudo tic -xe alacritty,alacritty-direct ./extra/alacritty.info
+  
+    sudo cp ./target/release/alacritty /usr/local/bin
+    sudo cp ./extra/logo/alacritty-term.svg /usr/share/pixmaps/Alacritty.svg
+    sudo desktop-file-install ./extra/linux/Alacritty.desktop
+    sudo update-desktop-database
+  )
+
+  sudo update-alternatives --install /usr/bin/x-terminal-emulator x-terminal-emulator /usr/local/bin/alacritty 50
+
   mkdir -p ~/.config/alacritty
   curl -o- 'https://codeload.github.com/alacritty/alacritty-theme/tar.gz/refs/heads/master' |
     tar xzf - alacritty-theme-master/themes
