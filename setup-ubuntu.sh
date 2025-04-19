@@ -337,6 +337,7 @@ sheldon add --github zdharma/fast-syntax-highlighting fast-syntax-highlighting
 sheldon add --github zdharma-continuum/history-search-multi-word history-search-multi-word
 sheldon add --github zsh-users/zsh-autosuggestions zsh-autosuggestions
 sheldon add --github zsh-users/zsh-completions zsh-completions
+sheldon add --use async.zsh pure.zsh --github sindresorhus/pure pure
 
 cat <<'A' >>~/.zshrc
 eval "$(sheldon source)"
