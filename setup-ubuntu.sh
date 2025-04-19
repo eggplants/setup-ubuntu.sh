@@ -181,8 +181,11 @@ command -v python 2>/dev/null || {
 
 # ruby
 command -v ruby 2>/dev/null || {
-  sudo apt install -y gcc make
-  CC=gcc mise use --global ruby@latest
+  sudo apt install -y \
+    gcc make autoconf patch build-essential rustc libssl-dev \
+    libyaml-dev libreadline6-dev zlib1g-dev libgmp-dev libncurses5-dev \
+    libffi-dev libgdbm6 libgdbm-dev libdb-dev uuid-dev
+  mise use --global ruby@latest
 }
 
 # node
