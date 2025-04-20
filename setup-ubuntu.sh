@@ -62,17 +62,6 @@ is_desktop && {
   gsettings set org.gnome.desktop.input-sources sources "[('xkb', 'jp'), ('ibus', 'mozc-jp')]"
 }
 
-# rancher desktop
-# curl -s 'https://download.opensuse.org/repositories/isv:/Rancher:/stable/deb/Release.key' | gpg --dearmor |
-#   sudo dd status=none of='/usr/share/keyrings/isv-rancher-stable-archive-keyring.gpg'
-# echo 'deb [signed-by=/usr/share/keyrings/isv-rancher-stable-archive-keyring.gpg]'\
-#      'https://download.opensuse.org/repositories/isv:/Rancher:/stable/deb/ ./' | 
-#   sudo dd status=none of='/etc/apt/sources.list.d/isv-rancher-stable.list'
-# sudo apt update
-# sudo apt install rancher-desktop -y
-# # https://github.com/rancher-sandbox/rancher-desktop/issues/4524#issuecomment-2079041512
-# sudo ln -s /usr/share/OVMF/OVMF_CODE_4M.fd /usr/share/OVMF/OVMF_CODE.fddock
-
 # docker
 if command -v wsl.exe &>/dev/null
 then
@@ -166,12 +155,6 @@ curl https://mise.run | sh
 echo 'eval "$($HOME/.local/bin/mise activate bash)"' >>~/.bashrc
 echo 'eval "$($HOME/.local/bin/mise activate zsh)"' >>~/.zshrc
 eval "$($HOME/.local/bin/mise activate ${SHELL/*\/})"
-
-# steam
-# is_desktop && {
-#   wget 'https://cdn.akamai.steamstatic.com/client/installer/steam.deb'
-#   sudo apt install ./steam.deb -y
-# }
 
 # python
 command -v python 2>/dev/null || {
@@ -327,11 +310,7 @@ is_desktop && {
 is_desktop && {
   wget https://github.com/win0err/gnome-runcat/releases/latest/download/runcat@kolesnikov.se.shell-extension.zip
   gnome-extensions install ./runcat@kolesnikov.se.shell-extension.zip --force
-  gdbus call --session \
-             --dest org.gnome.Shell.Extensions \
-             --object-path /org/gnome/Shell/Extensions \
-             --method org.gnome.Shell.Extensions.InstallRemoteExtension \
-             "runcat@kolesnikov.se"
+  # `gnome-extensions enable runcat@kolesnikov.se` after re-login
 }
 
 # sheldon
