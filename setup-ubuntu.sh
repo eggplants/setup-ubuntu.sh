@@ -277,7 +277,7 @@ is_desktop && {
   sudo wget -NP /etc/apt/sources.list.d/ "https://dl.winehq.org/wine-builds/ubuntu/dists/${CODENAME}/winehq-${CODENAME}.sources"
   sudo apt update
   sudo apt install --install-recommends winehq-devel winetricks -y
-  WINEARCH=win32 winecfg
+  WINEARCH=wow64 winecfg
   winetricks -q allfonts
 }
 
