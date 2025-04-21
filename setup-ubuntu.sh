@@ -409,6 +409,14 @@ cat <<'A' >.zshenv.tmp
 #!/usr/bin/env zsh
 
 # zmodload zsh/zprof && zprof
+
+function wine() {
+  locale -a | grep -qF ja_JP || sudo apt install language-pack-ja -y
+  if ! [[ -d ~/.wine ]]; then
+    WINEARCH=wow64 winecfg
+  fi
+  LANG=ja_JP.utf8 /usr/bin/env wine "$@"
+}
 A
 cat ~/.zshenv >>.zshenv.tmp
 mv .zshenv.tmp ~/.zshenv
