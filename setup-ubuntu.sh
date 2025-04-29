@@ -284,7 +284,12 @@ is_desktop && {
 # git
 [[ -f ~/.gitconfig ]] || {
   gh auth login -p https -h gitHub.com -w <<<y
-  gh auth setup-git
+
+  # gh auth setup-git
+  # https://github.com/microsoft/vscode-remote-release/issues/9252
+  git config --global credential.helper ''
+  git config --global --add credential.helper '!/usr/bin/env gh auth git-credential'
+
   git_email="$(
     gpg --list-keys | grep -Em1 '^uid' |
       rev | cut -f1 -d ' ' | tr -d '<>' | rev
