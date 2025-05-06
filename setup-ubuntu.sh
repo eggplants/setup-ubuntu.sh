@@ -321,7 +321,7 @@ is_desktop && {
 
 # sheldon
 curl --proto '=https' -fLsS https://rossmacarthur.github.io/install/crate.sh |
-  bash -s -- --repo rossmacarthur/sheldon --to ~/.local/
+  bash -s -- --repo rossmacarthur/sheldon --to ~/.local/bin
 sheldon init --shell zsh <<<y
 sheldon add --github zdharma/fast-syntax-highlighting fast-syntax-highlighting
 sheldon add --github zdharma-continuum/history-search-multi-word history-search-multi-word
