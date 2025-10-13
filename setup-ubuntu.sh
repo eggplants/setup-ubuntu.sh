@@ -184,9 +184,20 @@ command -v gh 2>/dev/null || {
   mise use --global gh@latest
 }
 
+# go
+command -v go 2>/dev/null || {
+  mise use --global go@latest
+}
+
 # rust
 command -v rust 2>/dev/null || {
   mise use --global rust@latest
+}
+
+# clisp
+command -v ros 2>/dev/null || {
+  mise use --global asdf:troydm/asdf-roswell
+  ros install sbcl-bin
 }
 
 # alacritty
@@ -252,19 +263,6 @@ is_desktop && {
   curl -s 'https://api.github.com/repos/robiot/xclicker/releases/latest' |
     grep -oEm1 'https://.*/xclicker_[^_]+_amd64.deb' | xargs wget
   sudo apt install ./xclicker_*_amd64.deb -y
-}
-
-# go
-command -v go 2>/dev/null || {
-  mise use --global go@latest
-}
-
-# clisp
-command -v ros 2>/dev/null || {
-  curl -s 'https://api.github.com/repos/roswell/roswell/releases/latest' |
-    grep -oEm1 'https://.*_amd64.deb' | xargs wget
-  sudo apt install ./roswell_*_amd64.deb
-  ros install sbcl-bin
 }
 
 # wine
