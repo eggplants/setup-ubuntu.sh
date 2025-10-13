@@ -158,7 +158,7 @@ eval "$($HOME/.local/bin/mise activate ${SHELL/*\/})"
 
 # python
 command -v python 2>/dev/null || {
-  mise use --global python@latest
+  (mise use --global python@latest)
   pip install pipx
   pipx ensurepath
   export PATH="$HOME/.local/bin:$PATH"
@@ -185,8 +185,9 @@ command -v gh 2>/dev/null || {
 }
 
 # rust
-curl 'https://sh.rustup.rs' | sh -s -- -y
-source ~/.cargo/env
+command -v rust 2>/dev/null || {
+  mise use --global rust@latest
+}
 
 # alacritty
 is_desktop && {
