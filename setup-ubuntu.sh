@@ -406,6 +406,7 @@ gpg-connect-agent updatestartuptty /bye >/dev/null
 
 A
 
+: >> ~/.zshrc
 cat ~/.zshrc >>.zshrc.tmp
 mv .zshrc.tmp ~/.zshrc
 
