@@ -337,7 +337,7 @@ eval "$(sheldon source)"
 A
 
 # zsh
-[[ "$SHELL" = "$(which zsh)" ]] || chsh -s "$(which zsh)"
+[[ "$SHELL" = "$(which zsh)" ]] || sudo chsh -s "$(which zsh)"
 cat <<'A' >.zshrc.tmp
 #!/usr/bin/env zsh
 
