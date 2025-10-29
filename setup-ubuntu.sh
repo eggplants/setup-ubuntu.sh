@@ -131,6 +131,7 @@ is_desktop && {
   sudo sh -c 'echo "deb [arch=amd64,arm64,armhf signed-by=/usr/share/keyrings/packages.microsoft.gpg] https://packages.microsoft.com/repos/code stable main" > /etc/apt/sources.list.d/vscode.list'
   sudo apt update -y
   sudo apt install code -y
+  code --install-extension ms-vscode-remote.remote-containers
 }
 
 # nanorc
