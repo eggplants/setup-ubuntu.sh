@@ -269,7 +269,7 @@ is_desktop && {
 is_desktop && {
   CODENAME="$(lsb_release -c | cut -f2)"
   sudo dpkg --add-architecture i386
-  sudo apt install libfaudio0 mesa-vulkan-drivers:i386 -y
+  sudo apt install libfaudio0 -y
   wget -qO- https://dl.winehq.org/wine-builds/winehq.key | gpg --dearmor > k
   sudo install -D -o root -g root -m 644 k /etc/apt/keyrings/winehq-archive.key
   rm k
