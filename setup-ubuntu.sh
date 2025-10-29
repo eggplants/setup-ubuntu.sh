@@ -202,7 +202,7 @@ command -v ros 2>/dev/null || {
 
 # alacritty
 is_desktop && {
-  apt install -y \
+  sudo apt install -y \
     cmake g++ pkg-config libfreetype6-dev libfontconfig1-dev libxcb-xfixes0-dev libxkbcommon-dev
   (
     git clone --depth 1 -b graphics --single-branch https://github.com/ayosec/alacritty
