@@ -30,9 +30,9 @@ is_desktop && {
 sudo apt update -y
 sudo apt upgrade -y
 sudo apt install -y \
-  byobu curl ca-certificates ffmpeg git gnupg2 \
+  alsa-utils curl ca-certificates ffmpeg git gnupg2 \
   imagemagick jq network-manager-l2tp pass \
-  pinentry-tty pkg-config unar vlc w3m wget zsh
+  pinentry-tty pkg-config timidity unar vlc w3m wget zsh
 sudo install -m 0755 -d /etc/apt/keyrings
 
 is_desktop && {
@@ -204,70 +204,8 @@ command -v ros 2>/dev/null || {
   ros install sbcl-bin
 }
 
-# alacritty
-is_desktop && {
-  sudo apt install -y \
-    cmake g++ pkg-config libfreetype6-dev libfontconfig1-dev libxcb-xfixes0-dev libxkbcommon-dev
-  (
-    git clone --depth 1 -b graphics --single-branch https://github.com/ayosec/alacritty
-    cd alacritty
-    cargo build --release
-
-    sudo tic -xe alacritty,alacritty-direct ./extra/alacritty.info
-    infocmp alacritty || sudo tic -xe alacritty,alacritty-direct ./extra/alacritty.info
-  
-    sudo cp ./target/release/alacritty /usr/local/bin
-    sudo cp ./extra/logo/alacritty-term.svg /usr/share/pixmaps/Alacritty.svg
-    sudo desktop-file-install ./extra/linux/Alacritty.desktop
-    sudo update-desktop-database
-  )
-
-  sudo update-alternatives --install /usr/bin/x-terminal-emulator x-terminal-emulator /usr/local/bin/alacritty 50
-  gsettings set org.gnome.desktop.default-applications.terminal exec "$(which alacritty)"
-
-  mkdir -p ~/.config/alacritty
-  curl -o- 'https://codeload.github.com/alacritty/alacritty-theme/tar.gz/refs/heads/master' |
-    tar xzf - alacritty-theme-master/themes
-  mv alacritty-theme-master ~/.config/alacritty
-  echo $'[general]\nimport = [' >> ~/.config/alacritty/alacritty.toml
-  find ~/.config/alacritty/alacritty-theme-master/themes -type f -name '*toml' |
-    sed 's/^.*/  # "&",/' >> ~/.config/alacritty/alacritty.toml
-  echo ']' >> ~/.config/alacritty/alacritty.toml
-
-  # hackgen
-  curl -s 'https://api.github.com/repos/yuru7/HackGen/releases/latest' |
-    grep -oEm1 'https://.*/HackGen_NF_v.*.zip' | xargs wget
-  unar HackGen_NF_v*.zip
-  mv ./HackGen_NF_v*/ hackgen
-  sudo mv ./hackgen /usr/share/fonts/truetype/
-  cat <<'A'>>~/.config/alacritty/alacritty.toml
-[font]
-size = 10.0
-
-[font.bold]
-family = "HackGen Console NF"
-style = "Bold"
-
-[font.bold_italic]
-family = "HackGen Console NF"
-style = "Bold Italic"
-
-[font.italic]
-family = "HackGen Console NF"
-style = "Italic"
-
-[font.normal]
-family = "HackGen Console NF"
-style = "Regular"
-A
-}
-
-# xclicker
-is_desktop && {
-  curl -s 'https://api.github.com/repos/robiot/xclicker/releases/latest' |
-    grep -oEm1 'https://.*/xclicker_[^_]+_amd64.deb' | xargs wget
-  sudo apt install ./xclicker_*_amd64.deb -y
-}
+# ghostty
+is_desktop && /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/mkasberg/ghostty-ubuntu/HEAD/install.sh)"
 
 # wine
 is_desktop && {
@@ -280,8 +218,25 @@ is_desktop && {
   sudo wget -NP /etc/apt/sources.list.d/ "https://dl.winehq.org/wine-builds/ubuntu/dists/${CODENAME}/winehq-${CODENAME}.sources"
   sudo apt update
   sudo apt install --install-recommends winehq-devel winetricks -y
+  echo 'timidity -iAD' >> ~/.profile
   WINEARCH=wow64 winecfg
-  winetricks -q allfonts
+  eval "winetricks -q "{allfonts,gmdls,dmsynth,directmusic,dsound,devenum,fakejapanese_ipamona}";"
+  wine reg add "HKEY_CURRENT_USER\Software\Wine\AppDefaults\RPG_RT.exe\X11 Driver" /v "ClientSideWithRender" /t REG_SZ /d "N"
+  mkdir -p ~/.config/wine
+  cat <<'EOF' > ~/.config/wine/font-noaa.conf
+<?xml version='1.0'?>
+<!DOCTYPE fontconfig SYSTEM "fonts.dtd">
+<fontconfig>
+ <!-- load default settings -->
+ <include>/etc/fonts/fonts.conf</include>
+ <!-- disable anti-aliasing -->
+ <match target="font">
+  <edit mode="assign" name="rgba">
+   <const>none</const>
+  </edit>
+ </match>
+</fontconfig>
+EOF
 }
 
 # git
@@ -369,6 +324,7 @@ unsetopt nomatch
 # alias
 alias ll='ls -lGF --color=auto'
 alias ls='ls -GF --color=auto'
+alias wine-rpg='FONTCONFIG_FILE="$HOME/.config/wine/font-noaa.conf" wine'
 
 # save cmd history up to 100k
 HISTFILE="$HOME/.zsh_history"
@@ -429,9 +385,6 @@ function wine() {
 A
 cat ~/.zshenv >>.zshenv.tmp
 mv .zshenv.tmp ~/.zshenv
-
-byobu-enable
-echo '_byobu_sourced=1 . /usr/bin/byobu-launch 2>/dev/null || true' > ~/.zprofile
 
 sudo apt autoremove -y
 sudo apt autoclean -y
