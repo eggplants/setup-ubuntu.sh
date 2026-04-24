@@ -30,14 +30,14 @@ is_desktop && {
 sudo apt update -y
 sudo apt upgrade -y
 sudo apt install -y \
-  alsa-utils curl ca-certificates ffmpeg git gnupg2 \
+  curl ca-certificates ffmpeg git gnupg2 \
   imagemagick jq network-manager-l2tp pass \
-  pinentry-tty pkg-config timidity unar vlc w3m wget zsh
+  pinentry-tty pkg-config timidity unar w3m wget zsh
 sudo install -m 0755 -d /etc/apt/keyrings
 
 is_desktop && {
   sudo apt install -y \
-    feh ibus-mozc network-manager-l2tp-gnome rhythmbox
+    alsa-utils feh ibus-mozc network-manager-l2tp-gnome rhythmbox vlc
 }
 
 # for java
