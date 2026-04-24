@@ -202,8 +202,10 @@ command -v ros 2>/dev/null || {
 }
 
 # ghostty
-is_desktop && /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/mkasberg/ghostty-ubuntu/HEAD/install.sh)"
-gsettings set org.gnome.desktop.default-applications.terminal exec '/usr/bin/ghostty'
+is_desktop && {
+  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/mkasberg/ghostty-ubuntu/HEAD/install.sh)"
+  gsettings set org.gnome.desktop.default-applications.terminal exec '/usr/bin/ghostty'
+}
 
 # wine
 is_desktop && {
