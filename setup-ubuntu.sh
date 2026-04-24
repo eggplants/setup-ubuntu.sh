@@ -383,7 +383,7 @@ function wine() {
   LANG=ja_JP.utf8 /usr/bin/env wine "$@"
 }
 A
-cat ~/.zshenv >>.zshenv.tmp
+[[ -f ~/.zshenv ]] && cat ~/.zshenv >>.zshenv.tmp
 mv .zshenv.tmp ~/.zshenv
 
 sudo apt autoremove -y
