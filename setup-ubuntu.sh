@@ -171,7 +171,7 @@ command -v python 2>/dev/null || {
 
 # ruby
 command -v ruby 2>/dev/null || {
-  mise settings --global ruby.compile=false
+  mise settings ruby.compile=false
   mise use --global ruby
 }
 
