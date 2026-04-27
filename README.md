@@ -1,20 +1,20 @@
 # My setup script for Ubuntu
 
-A setup script for Ubuntu 25.04 (plucky) using **Nix home-manager** for user-level config and a thin bootstrap script for system-level setup.
+A setup script for Ubuntu 26.04
 
 ## Run
 
 Clone this repo to `~/.config/home-manager/`, then run:
 
 ```bash
+sudo apt install -y git
+
 git clone https://github.com/eggplants/setup-ubuntu.sh ~/.config/home-manager
 cd ~/.config/home-manager
 
 # Place your GPG secret key at ~/.sec.key, then:
 ./bootstrap.sh
 ```
-
-`bootstrap.sh` runs `home-manager switch --flake .` from `~/.config/home-manager/`, so `flake.nix` and `home.nix` must be present there. The directory is kept after bootstrap for ongoing maintenance.
 
 ## Update home-manager config
 
