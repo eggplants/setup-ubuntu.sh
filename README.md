@@ -4,8 +4,6 @@ A setup script for Ubuntu 26.04
 
 ## Run
 
-Clone this repo to `~/.config/home-manager/`, then run:
-
 ```bash
 sudo apt install -y git
 
@@ -29,16 +27,6 @@ home-manager switch --flake .#eggplants
 # desktop
 home-manager switch --flake .#eggplants-desktop
 ```
-
-## What goes where
-
-| Concern | File |
-|---|---|
-| System apt packages, Docker, GPG import, Wine, Ghostty, GNOME extensions | `bootstrap.sh` |
-| Packages (nixpkgs), git, zsh, gpg-agent, nano, mise, VSCode | `home.nix` |
-| Nix inputs & profile names | `flake.nix` |
-
-The legacy `setup-ubuntu.sh` is kept as reference.
 
 ## Family
 
