@@ -167,6 +167,7 @@ command -v python 2>/dev/null || {
   pipx ensurepath
   export PATH="$HOME/.local/bin:$PATH"
   pipx install getjump yt-dlp
+  pipx inject yt-dlp secretstorage
 }
 
 # ruby
