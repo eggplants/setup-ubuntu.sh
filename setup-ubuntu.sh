@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# FOR Ubuntu 25.04 plucky
+# FOR Ubuntu 25.04 plucky / 26.04 resolute
 
 set -eux
 
