@@ -22,10 +22,10 @@ Edit `home.nix` in `~/.config/home-manager/`, then:
 cd ~/.config/home-manager
 
 # headless
-home-manager switch --flake .#eggplants
+home-manager switch --flake '.#eggplants'
 
 # desktop
-home-manager switch --flake .#eggplants-desktop
+home-manager switch --flake '.#eggplants-desktop'
 ```
 
 ## Family
