@@ -16,8 +16,8 @@ IS_DESKTOP="$(apt list --installed 2>/dev/null | grep ubuntu-desktop -q && echo 
 is_desktop() { [[ "$IS_DESKTOP" = true ]]; }
 
 cd ~
-mkdir -p .config .gnupg prog Games _setup
-pushd _setup
+mkdir -p .config/home-manager .gnupg prog Games
+pushd .config/home-manager
 
 if ! [[ -f ~/.sec.key ]]; then
   echo "need: ~/.sec.key"
@@ -62,6 +62,7 @@ is_desktop && {
   curl -s 'https://www.qnap.com/ja-jp/utilities/essentials' |
     grep -oEm1 'https://[^"]+/QNAPQfinderProUbuntux64[^"]+\.deb' | xargs wget
   sudo apt install ./QNAPQfinderProUbuntux64*.deb -y
+  rm ./QNAPQfinderProUbuntux64*.deb
 }
 
 # GPG key import
@@ -111,7 +112,6 @@ sudo apt autoclean -y
 
 rm ~/.sec.key
 popd
-rm -rf _setup
 
 is_desktop && gsettings set org.gnome.desktop.lockdown disable-lock-screen 'false'
 

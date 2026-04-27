@@ -4,18 +4,25 @@ A setup script for Ubuntu 25.04 (plucky) using **Nix home-manager** for user-lev
 
 ## Run
 
+Clone this repo to `~/.config/home-manager/`, then run:
+
 ```bash
+git clone https://github.com/eggplants/setup-ubuntu.sh ~/.config/home-manager
+cd ~/.config/home-manager
+
 # Place your GPG secret key at ~/.sec.key, then:
 ./bootstrap.sh
 ```
 
-`bootstrap.sh` installs Nix, runs `home-manager switch`, and reboots.
+`bootstrap.sh` runs `home-manager switch --flake .` from `~/.config/home-manager/`, so `flake.nix` and `home.nix` must be present there. The directory is kept after bootstrap for ongoing maintenance.
 
 ## Update home-manager config
 
-After initial setup, apply changes to `home.nix`:
+Edit `home.nix` in `~/.config/home-manager/`, then:
 
 ```bash
+cd ~/.config/home-manager
+
 # headless
 home-manager switch --flake .#eggplants
 
