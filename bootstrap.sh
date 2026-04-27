@@ -1,28 +1,17 @@
 #!/usr/bin/env bash
 
-# Bootstrap script for Ubuntu 25.04 (plucky)
-# Handles system-level setup that home-manager cannot perform.
-#
-# Usage:
-#   ./bootstrap.sh
-#
-# After completion, home-manager switch is run automatically.
-# A reboot is triggered at the end.
-
 set -eux
-
-IS_DESKTOP="$(apt list --installed 2>/dev/null | grep ubuntu-desktop -q && echo true || :)"
-
-is_desktop() { [[ "$IS_DESKTOP" = true ]]; }
-
-cd ~
-mkdir -p .config/home-manager .gnupg prog Games
-pushd .config/home-manager
 
 if ! [[ -f ~/.sec.key ]]; then
   echo "need: ~/.sec.key"
   exit 1
 fi
+
+IS_DESKTOP="$(apt list --installed 2>/dev/null | grep ubuntu-desktop -q && echo true || :)"
+
+is_desktop() { [[ "$IS_DESKTOP" = true ]]; }
+
+mkdir -p "$HOME"/{.config/home-manager,.gnupg,prog,Games}
 
 is_desktop && gsettings set org.gnome.desktop.lockdown disable-lock-screen 'true'
 
@@ -111,7 +100,6 @@ sudo apt autoremove -y
 sudo apt autoclean -y
 
 rm ~/.sec.key
-popd
 
 is_desktop && gsettings set org.gnome.desktop.lockdown disable-lock-screen 'false'
 
