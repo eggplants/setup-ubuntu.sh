@@ -3,56 +3,23 @@
 set -eux
 
 if ! [[ -f ~/.sec.key ]]; then
-  echo "need: ~/.sec.key"
+  echo "Not found: ~/.sec.key"
   exit 1
 fi
 
-IS_DESKTOP="$(apt list --installed 2>/dev/null | grep ubuntu-desktop -q && echo true || :)"
-
-is_desktop() { [[ "$IS_DESKTOP" = true ]]; }
+if ! apt list --installed 2>/dev/null | grep ubuntu-desktop -q; then
+  echo "This script is only for Ubuntu Desktop."
+  exit 1
+fi
 
 mkdir -p "$HOME"/{.config/home-manager,.gnupg,prog,Games}
 
-is_desktop && gsettings set org.gnome.desktop.lockdown disable-lock-screen 'true'
-
-# apt system packages
-
-sudo apt update -y
-sudo apt upgrade -y
-sudo apt install -y \
-  curl ca-certificates git gnupg2 \
-  network-manager-l2tp pass \
-  pinentry-tty pkg-config zsh uidmap \
-sudo install -m 0755 -d /etc/apt/keyrings
-
-[[ "$SHELL" = "$(which zsh)" ]] || sudo chsh -s "$(which zsh)" "$USER"
-
-is_desktop && sudo apt install -y \
-  alsa-utils ibus-mozc \
-  network-manager-l2tp-gnome
+gsettings set org.gnome.desktop.lockdown disable-lock-screen 'true'
 
 # mozc / ibus
 
-is_desktop && {
-  ibus restart
-  gsettings set org.gnome.desktop.input-sources sources \
-    "[('xkb', 'jp'), ('ibus', 'mozc-jp')]"
-}
-
-# Docker
-
-if command -v wsl.exe &>/dev/null; then
-  powershell.exe /c winget.exe install Docker.DockerDesktop || :
-fi
-
-# QNAP Qfinder (desktop)
-
-is_desktop && {
-  curl -s 'https://www.qnap.com/ja-jp/utilities/essentials' |
-    grep -oEm1 'https://[^"]+/QNAPQfinderProUbuntux64[^"]+\.deb' | xargs wget
-  sudo apt install ./QNAPQfinderProUbuntux64*.deb -y
-  rm ./QNAPQfinderProUbuntux64*.deb
-}
+ibus restart
+gsettings set org.gnome.desktop.input-sources sources "[('xkb', 'jp'), ('ibus', 'mozc-jp')]"
 
 # GPG key import
 
@@ -84,23 +51,15 @@ mkdir -p ~/.config/nix
 grep -qF 'experimental-features' ~/.config/nix/nix.conf 2>/dev/null ||
   echo 'experimental-features = nix-command flakes' >> ~/.config/nix/nix.conf
 
-# home-manager switch
-
-PROFILE="eggplants$(is_desktop && echo '-desktop' || true)"
-nix run home-manager/master -- switch --flake ".#${PROFILE}"
+nix run home-manager/master -- switch --flake '.#eggplants-desktop'
 
 # Run `mise install` to pull language runtimes defined in globalConfig
 # (mise itself is installed by home-manager)
 export PATH="$HOME/.local/bin:$PATH"
 mise install || true
 
-# Cleanup
-
-sudo apt autoremove -y
-sudo apt autoclean -y
-
 rm ~/.sec.key
 
-is_desktop && gsettings set org.gnome.desktop.lockdown disable-lock-screen 'false'
+gsettings set org.gnome.desktop.lockdown disable-lock-screen 'false'
 
 echo "Done! Should be reboot."

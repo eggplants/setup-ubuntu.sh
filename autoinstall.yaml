@@ -1,0 +1,68 @@
+#cloud-config
+autoinstall:
+  version: 1
+
+  locale: en_US.UTF-8
+  timezone: Asia/Tokyo
+
+  keyboard:
+    layout: jp
+    variant: ""
+
+  network:
+    version: 2
+    ethernets:
+      any-nic:
+        match:
+          name: "en*"
+        dhcp4: true
+
+  storage:
+    layout:
+      name: lvm
+      sizing-policy: all
+      encrypt: true
+      password: "CHANGE_ME_LUKS_PASSPHRASE" # change with plain password
+
+  identity:
+    realname: "eggplants"
+    username: "eggplants"
+    hostname: "eggplants-ThinkPad-X1-Carbon-Gen-9"
+    password: "CHANGE_ME_HASHED_PW" # change with: `openssl passwd -6 'PW'`
+
+  ssh:
+    install-server: false
+    allow-pw: false
+
+  packages:
+    - alsa-utils
+    - ca-certificates
+    - curl
+    - fonts-noto-cjk
+    - git
+    - gnupg2
+    - ibus-mozc
+    - language-pack-ja
+    - language-pack-ja-base
+    - network-manager-l2tp
+    - network-manager-l2tp-gnome
+    - pass
+    - pinentry-tty
+    - pkg-config
+    - uidmap
+    - zsh
+
+  late-commands:
+    - curtin in-target -- install -m 0755 -d /etc/apt/keyrings
+    - curtin in-target -- chsh -s /usr/bin/zsh eggplants
+    - |
+      # Install Qfinder Pro
+      curtin in-target -- bash -c 'curl -s https://www.qnap.com/ja-jp/utilities/essentials | grep -oP "https://\S+/QNAPQfinderProUbuntux64\S+\.deb" | head -1 | xargs curl -Lo /tmp/qfinder.deb'
+      curtin in-target -- apt install -y /tmp/qfinder.deb
+      curtin in-target -- rm -f /tmp/qfinder.deb
+    - curtin in-target -- apt autoremove -y
+    - curtin in-target -- apt autoclean -y
+
+  apt:
+    geoip: true
+    preserve_sources_list: false
