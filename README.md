@@ -1,12 +1,10 @@
-# My setup script for Ubuntu
-
-A setup script for Ubuntu 26.04
+# My setup for Ubuntu Desktop
 
 ## Run
 
-```bash
-sudo apt install -y git
+After install Ubuntu Desktop with [`autoinstall.yaml`](./autoinstall.yaml):
 
+```bash
 git clone https://github.com/eggplants/setup-ubuntu.sh ~/.config/home-manager
 cd ~/.config/home-manager
 
@@ -20,13 +18,12 @@ Edit `home.nix` in `~/.config/home-manager/`, then:
 
 ```bash
 cd ~/.config/home-manager
-
-# headless
-home-manager switch --flake '.#eggplants'
-
-# desktop
 home-manager switch --flake '.#eggplants-desktop'
 ```
+
+## Legacy
+
+For Ubuntu 25.04 / 26.04: [`setup.ubuntu.sh`](./setup-ubuntu.sh)
 
 ## Family
 
