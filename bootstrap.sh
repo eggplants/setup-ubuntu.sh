@@ -51,6 +51,31 @@ grep -qF 'experimental-features' ~/.config/nix/nix.conf 2>/dev/null ||
 
 nix run home-manager/master -- switch --flake '.#eggplants-desktop'
 
+# wine / winetricks (installed via apt; nix wine is currently broken)
+CODENAME="$(lsb_release -c | cut -f2)"
+sudo dpkg --add-architecture i386
+sudo apt install -y libfaudio0
+wget -qO- https://dl.winehq.org/wine-builds/winehq.key | gpg --dearmor > k
+sudo install -D -o root -g root -m 644 k /etc/apt/keyrings/winehq-archive.key
+rm k
+sudo wget -NP /etc/apt/sources.list.d/ \
+  "https://dl.winehq.org/wine-builds/ubuntu/dists/${CODENAME}/winehq-${CODENAME}.sources"
+sudo apt update
+sudo apt install -y --install-recommends winehq-devel winetricks
+if ! [[ -d ~/.wine ]]; then
+  WINEARCH=wow64 wineboot --init
+  for i in allfonts gmdls dmsynth directmusic dsound devenum fakejapanese_ipamona; do
+    winetricks -q "$i"
+  done
+  wine reg add \
+    "HKEY_CURRENT_USER\\Software\\Wine\\AppDefaults\\RPG_RT.exe\\X11 Driver" \
+    /v ClientSideWithRender /t REG_SZ /d N
+  wget https://tkool.jp/products/rtp/2000rtp.zip
+  unzip -O sjis -j 2000rtp.zip "*.exe"
+  wine RPG2000RTP.exe
+  rm RPG2000RTP.exe 2000rtp.zip
+fi
+
 # Ubuntu 24.04+ restricts unprivileged user namespaces via AppArmor, which breaks rootless Docker
 echo 'kernel.apparmor_restrict_unprivileged_userns=0' | sudo tee /etc/sysctl.d/99-userns.conf
 sudo sysctl --system

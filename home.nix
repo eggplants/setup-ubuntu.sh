@@ -30,9 +30,6 @@
     # GPU-accelerated apps wrapped with nixGL for Ubuntu
     (config.lib.nixGL.wrap pkgs.ghostty)
     (config.lib.nixGL.wrap pkgs.google-chrome)
-    # Wine: wineWow64Packages bundles both 32-bit and 64-bit support
-    pkgs.wineWow64Packages.waylandFull
-    pkgs.winetricks
     pkgs.gnomeExtensions.runcat
     pkgs.hackgen-nf-font
   ];
@@ -266,19 +263,6 @@
     Install.WantedBy = [ "default.target" ];
   };
 
-  # One-time Wine prefix initialization; skipped if ~/.wine already exists
-  # or if no display is available (activation runs during home-manager switch).
-  home.activation.wineSetup = lib.mkIf isDesktop (lib.hm.dag.entryAfter ["writeBoundary"] ''
-    if ! [[ -d $HOME/.wine ]] && [[ -n "''${DISPLAY:-}''${WAYLAND_DISPLAY:-}" ]]; then
-      ${pkgs.wineWow64Packages.waylandFull}/bin/wineboot --init
-      ${pkgs.winetricks}/bin/winetricks -q \
-        allfonts gmdls dmsynth directmusic dsound devenum fakejapanese_ipamona
-      ${pkgs.wineWow64Packages.waylandFull}/bin/wine reg add \
-        "HKEY_CURRENT_USER\\Software\\Wine\\AppDefaults\\RPG_RT.exe\\X11 Driver" \
-        /v ClientSideWithRender /t REG_SZ /d N
-    fi
-  '');
-
   # ── Fonts ─────────────────────────────────────────────────────────────────
 
   fonts.fontconfig.enable = lib.mkIf isDesktop true;
@@ -340,6 +324,16 @@
     };
     "org/gnome/shell" = {
       enabled-extensions = [ "runcat@kolesnikov.se" ];
+    };
+    "org/gnome/shell/extensions/dash-to-dock" = {
+      extend-height = false;
+      dock-position = "BOTTOM";
+      dash-max-icon-size = 16;
+      intellihide = false;
+      dock-fixed = false;
+    };
+    "org/gnome/desktop/interface" = {
+      text-scaling-factor = 1.0;
     };
   };
 
