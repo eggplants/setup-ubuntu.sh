@@ -49,7 +49,10 @@ mkdir -p ~/.config/nix
 grep -qF 'experimental-features' ~/.config/nix/nix.conf 2>/dev/null ||
   echo 'experimental-features = nix-command flakes' >> ~/.config/nix/nix.conf
 
-nix run home-manager/master -- switch --flake '.#eggplants-desktop'
+# dbus-run-session guarantees DBUS_SESSION_BUS_ADDRESS is set for the
+# home-manager activation; without it, dconf.settings writes are silently
+# skipped (home-manager checks for the variable before calling dconf).
+dbus-run-session -- nix run home-manager/master -- switch --flake '.#eggplants-desktop'
 
 # wine / winetricks (installed via apt; nix wine is currently broken)
 CODENAME="$(lsb_release -c | cut -f2)"
@@ -61,20 +64,10 @@ rm k
 sudo wget -NP /etc/apt/sources.list.d/ \
   "https://dl.winehq.org/wine-builds/ubuntu/dists/${CODENAME}/winehq-${CODENAME}.sources"
 sudo apt update
-sudo apt install -y --install-recommends winehq-devel winetricks
-if ! [[ -d ~/.wine ]]; then
-  WINEARCH=wow64 wineboot --init
-  for i in allfonts gmdls dmsynth directmusic dsound devenum fakejapanese_ipamona; do
-    winetricks -q "$i"
-  done
-  wine reg add \
-    "HKEY_CURRENT_USER\\Software\\Wine\\AppDefaults\\RPG_RT.exe\\X11 Driver" \
-    /v ClientSideWithRender /t REG_SZ /d N
-  wget https://tkool.jp/products/rtp/2000rtp.zip
-  unzip -O sjis -j 2000rtp.zip "*.exe"
-  wine RPG2000RTP.exe
-  rm RPG2000RTP.exe 2000rtp.zip
-fi
+sudo apt install -y --install-recommends winehq-devel winetricks language-pack-ja
+# Wine prefix init, winetricks packages, and RPG2000 RTP installation require a
+# fully started graphical session (Wayland/audio). The systemd user service
+# 'wine-rpg2000-setup' (defined in home.nix) runs automatically on first login.
 
 # Ubuntu 24.04+ restricts unprivileged user namespaces via AppArmor, which breaks rootless Docker
 echo 'kernel.apparmor_restrict_unprivileged_userns=0' | sudo tee /etc/sysctl.d/99-userns.conf

@@ -253,6 +253,53 @@
 
   # ── Wine setup (desktop only) ────────────────────────────────────────────
 
+  # Wine prefix init + RPG2000 RTP installation deferred to first graphical login.
+  # XDG autostart (not systemd) for Wine/RPG2000 first-time setup.
+  # A systemd service with WantedBy=graphical-session.target is started by
+  # home-manager's reloadSystemd activation when run inside a GNOME session,
+  # causing `hms` to hang on the blocking GUI installer. XDG autostart entries
+  # are processed by gnome-session, not by home-manager, so they never run
+  # during `hms`. The flag file prevents re-runs after the first login.
+  xdg.configFile."autostart/wine-rpg2000-setup.desktop" = lib.mkIf isDesktop (
+    let
+      script = pkgs.writeShellScript "wine-rpg2000-setup" ''
+        [[ -f "$HOME/.local/share/.wine-rpg2000-done" ]] && exit 0
+        command -v wine &>/dev/null || exit 0
+
+        if [[ ! -d "$HOME/.wine" ]]; then
+          WINEARCH=wow64 wineboot --init
+        fi
+
+        for pkg in allfonts gmdls dmsynth directmusic dsound devenum fakejapanese_ipamona; do
+          winetricks -q "$pkg"
+        done
+
+        wine reg add \
+          "HKEY_CURRENT_USER\\Software\\Wine\\AppDefaults\\RPG_RT.exe\\X11 Driver" \
+          /v ClientSideWithRender /t REG_SZ /d N /f
+
+        tmp=$(mktemp -d)
+        trap 'rm -rf "$tmp"' EXIT
+        cd "$tmp"
+        wget -q https://tkool.jp/products/rtp/2000rtp.zip
+        unzip -O sjis -j 2000rtp.zip "*.exe"
+        LANG=ja_JP.UTF-8 wine RPG2000RTP.exe
+
+        touch "$HOME/.local/share/.wine-rpg2000-done"
+      '';
+    in {
+      text = ''
+        [Desktop Entry]
+        Version=1.0
+        Type=Application
+        Name=Wine RPG2000 RTP Setup
+        Exec=${script}
+        X-GNOME-Autostart-enabled=true
+        NoDisplay=true
+      '';
+    }
+  );
+
   # Start timidity as ALSA MIDI sequencer on login (required for Wine audio)
   systemd.user.services.timidity = lib.mkIf isDesktop {
     Unit.Description = "TiMidity++ ALSA MIDI sequencer";
@@ -315,6 +362,29 @@
     };
   };
 
+  # Safety-net for bootstrap runs where DBUS_SESSION_BUS_ADDRESS was unset
+  # (home-manager silently skips dconf.settings writes without a D-Bus session).
+  # Runs once after the first graphical login; the flag file prevents re-runs.
+  systemd.user.services.apply-gnome-defaults = lib.mkIf isDesktop {
+    Unit = {
+      Description = "Apply GNOME dconf defaults (first graphical login)";
+      After = [ "graphical-session.target" ];
+      ConditionPathExists = "!%h/.local/share/.gnome-defaults-applied";
+    };
+    Service = {
+      Type = "oneshot";
+      ExecStart = let
+        script = pkgs.writeShellScript "apply-gnome-defaults" ''
+          ${pkgs.dconf}/bin/dconf write \
+            /org/gnome/desktop/default-applications/terminal/exec "'ghostty'"
+          touch "$HOME/.local/share/.gnome-defaults-applied"
+        '';
+      in "${script}";
+      RemainAfterExit = true;
+    };
+    Install.WantedBy = [ "graphical-session.target" ];
+  };
+
   # ── GNOME settings (desktop only) ────────────────────────────────────────
 
   dconf.settings = lib.mkIf isDesktop {
@@ -324,6 +394,12 @@
     };
     "org/gnome/shell" = {
       enabled-extensions = [ "runcat@kolesnikov.se" ];
+      favorite-apps = [
+        "org.gnome.Nautilus.desktop"
+        "org.gnome.Rhythmbox3.desktop"
+        "com.mitchellh.ghostty.desktop"
+        "google-chrome.desktop"
+      ];
     };
     "org/gnome/shell/extensions/dash-to-dock" = {
       extend-height = false;
@@ -334,6 +410,10 @@
     };
     "org/gnome/desktop/interface" = {
       text-scaling-factor = 1.0;
+      scaling-factor = lib.hm.gvariant.mkUint32 1;
+    };
+    "org/gnome/shell/extensions/ding" = {
+      show-home = false;
     };
   };
 
