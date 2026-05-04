@@ -49,9 +49,6 @@ mkdir -p ~/.config/nix
 grep -qF 'experimental-features' ~/.config/nix/nix.conf 2>/dev/null ||
   echo 'experimental-features = nix-command flakes' >> ~/.config/nix/nix.conf
 
-# dbus-run-session guarantees DBUS_SESSION_BUS_ADDRESS is set for the
-# home-manager activation; without it, dconf.settings writes are silently
-# skipped (home-manager checks for the variable before calling dconf).
 dbus-run-session -- nix run home-manager/master -- switch --flake '.#eggplants-desktop'
 
 # wine / winetricks (installed via apt; nix wine is currently broken)
@@ -65,20 +62,18 @@ sudo wget -NP /etc/apt/sources.list.d/ \
   "https://dl.winehq.org/wine-builds/ubuntu/dists/${CODENAME}/winehq-${CODENAME}.sources"
 sudo apt update
 sudo apt install -y --install-recommends winehq-devel winetricks language-pack-ja
-# Wine prefix init, winetricks packages, and RPG2000 RTP installation require a
-# fully started graphical session (Wayland/audio). The systemd user service
-# 'wine-rpg2000-setup' (defined in home.nix) runs automatically on first login.
 
 # Ubuntu 24.04+ restricts unprivileged user namespaces via AppArmor, which breaks rootless Docker
 echo 'kernel.apparmor_restrict_unprivileged_userns=0' | sudo tee /etc/sysctl.d/99-userns.conf
 sudo sysctl --system
 
-# Run `mise install` to pull language runtimes defined in globalConfig
-# (mise itself is installed by home-manager)
+# mise
+
 export PATH="$HOME/.local/bin:$PATH"
 mise trust -ay
 mise install || true
 
 rm ~/.sec.key
 
-echo "Done! Should be reboot."
+read -n1 -p "reboot? (y/N): " yn
+[[ "$yn" = [yY] ]] && sudo shutdown -h now
