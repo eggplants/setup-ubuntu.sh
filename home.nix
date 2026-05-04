@@ -69,6 +69,9 @@
   home.sessionVariables.XDG_DATA_DIRS = "/home/${config.home.username}/.nix-profile/share:/nix/var/nix/profiles/default/share:/usr/local/share:/usr/share:/var/lib/snapd/desktop";
   home.sessionVariables.PATH = "/home/${config.home.username}/.nix-profile/bin:/nix/var/nix/profiles/default/bin:\${PATH}";
   home.sessionVariables.NIXOS_OZONE_WL = "1";
+  home.sessionPath = [
+    "$HOME/.config/Code/User/globalStorage/ms-vscode-remote.remote-containers/cli-bin"
+  ];
 
   # Write all git config to ~/.gitconfig via activation (idempotent).
   home.activation.gitConfig = lib.hm.dag.entryAfter ["writeBoundary"] ''
@@ -422,8 +425,10 @@
   programs.vscode = lib.mkIf isDesktop {
     enable = true;
     package = config.lib.nixGL.wrap pkgs.vscode;
-    # ms-vscode-remote.remote-containers is not in nixpkgs; install manually after switch:
-    #   code --install-extension ms-vscode-remote.remote-containers
+    profiles.default.extensions =
+      with pkgs.nix-vscode-extensions.vscode-marketplace; [
+        ms-vscode-remote.remote-containers
+      ];
   };
 
   # ── Ghostty config (desktop only) ────────────────────────────────────────

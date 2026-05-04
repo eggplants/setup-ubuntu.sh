@@ -8,14 +8,16 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     nixgl.url = "github:nix-community/nixGL";
+    nix-vscode-extensions.url = "github:nix-community/nix-vscode-extensions";
   };
 
-  outputs = { nixpkgs, home-manager, nixgl, ... }:
+  outputs = { nixpkgs, home-manager, nixgl, nix-vscode-extensions, ... }:
     let
       system = "x86_64-linux";
       pkgs = import nixpkgs {
         inherit system;
         config.allowUnfree = true;
+        overlays = [ nix-vscode-extensions.overlays.default ];
       };
       mkHome = isDesktop: home-manager.lib.homeManagerConfiguration {
         inherit pkgs;
