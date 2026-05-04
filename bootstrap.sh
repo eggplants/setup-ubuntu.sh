@@ -2,6 +2,10 @@
 
 set -eux
 
+#
+# Pre-install
+#
+
 if ! [[ -f ~/.sec.key ]]; then
   echo "Not found: ~/.sec.key"
   exit 1
@@ -14,12 +18,16 @@ fi
 
 mkdir -p "$HOME"/{.config/home-manager,.gnupg,prog,Games}
 
+#
 # mozc / ibus
+#
 
 ibus restart
 gsettings set org.gnome.desktop.input-sources sources "[('xkb', 'jp'), ('ibus', 'mozc-jp')]"
 
+#
 # GPG key import
+#
 
 gpg --list-keys | grep -qE '^ *EE3A' || {
   export GPG_TTY="$(tty)"
@@ -36,7 +44,9 @@ gpg --list-keys | grep -qE '^ *EE3A' || {
   gpg-connect-agent updatestartuptty /bye
 }
 
+#
 # Nix
+#
 
 if ! command -v nix &>/dev/null; then
   curl -L https://nixos.org/nix/install | sh -s -- --daemon
@@ -51,7 +61,10 @@ grep -qF 'experimental-features' ~/.config/nix/nix.conf 2>/dev/null ||
 
 dbus-run-session -- nix run home-manager/master -- switch --flake '.#eggplants-desktop'
 
+#
 # wine / winetricks (installed via apt; nix wine is currently broken)
+#
+
 CODENAME="$(lsb_release -c | cut -f2)"
 sudo dpkg --add-architecture i386
 sudo apt install -y libfaudio0
@@ -63,15 +76,24 @@ sudo wget -NP /etc/apt/sources.list.d/ \
 sudo apt update
 sudo apt install -y --install-recommends winehq-devel winetricks language-pack-ja
 
+#
 # Ubuntu 24.04+ restricts unprivileged user namespaces via AppArmor, which breaks rootless Docker
+#
+
 echo 'kernel.apparmor_restrict_unprivileged_userns=0' | sudo tee /etc/sysctl.d/99-userns.conf
 sudo sysctl --system
 
+#
 # mise
+#
 
 export PATH="$HOME/.local/bin:$PATH"
 mise trust -ay
 mise install || true
+
+#
+# Post-install
+#
 
 rm ~/.sec.key
 
