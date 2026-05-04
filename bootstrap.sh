@@ -90,6 +90,7 @@ sudo sysctl --system
 export PATH="$HOME/.local/bin:$PATH"
 mise trust -ay
 mise install || true
+mise generate git-pre-commit --write
 
 #
 # Post-install
