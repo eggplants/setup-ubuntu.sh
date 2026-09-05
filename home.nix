@@ -16,7 +16,7 @@
   # ── Packages ──────────────────────────────────────────────────────────────
 
   home.packages = with pkgs; [
-    curl wget w3m jq unar
+    curl wget aria2 w3m jq unar
     ffmpeg imagemagick
     timidity pkg-config
     jdk21 maven
