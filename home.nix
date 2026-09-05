@@ -16,7 +16,7 @@
   # ── Packages ──────────────────────────────────────────────────────────────
 
   home.packages = with pkgs; [
-    curl wget aria2 w3m jq unar
+    curl wget aria2 w3m jq unar torsocks
     ffmpeg imagemagick
     timidity pkg-config
     jdk21 maven
@@ -27,11 +27,13 @@
     rootlesskit slirp4netns fuse-overlayfs
   ] ++ lib.optionals isDesktop [
     feh vlc rhythmbox alsa-utils
+    transmission_4-gtk
     # GPU-accelerated apps wrapped with nixGL for Ubuntu
     (config.lib.nixGL.wrap pkgs.ghostty)
     (config.lib.nixGL.wrap pkgs.mpv)
     (config.lib.nixGL.wrap pkgs.google-chrome)
     pkgs.gnomeExtensions.runcat
+    pkgs.gnomeExtensions.caffeine
     pkgs.hackgen-nf-font
   ];
 
@@ -325,6 +327,8 @@
   xdg.dataFile = lib.mkIf isDesktop {
     "gnome-shell/extensions/runcat@kolesnikov.se".source =
       "${pkgs.gnomeExtensions.runcat}/share/gnome-shell/extensions/runcat@kolesnikov.se";
+    "gnome-shell/extensions/caffeine@patapon.info".source =
+      "${pkgs.gnomeExtensions.caffeine}/share/gnome-shell/extensions/caffeine@patapon.info";
   };
 
   # ── GNOME desktop entries (desktop only) ──────────────────────────────────
@@ -397,7 +401,7 @@
       exec-arg = "";
     };
     "org/gnome/shell" = {
-      enabled-extensions = [ "runcat@kolesnikov.se" ];
+      enabled-extensions = [ "runcat@kolesnikov.se" "caffeine@patapon.info" ];
       favorite-apps = [
         "org.gnome.Nautilus.desktop"
         "org.gnome.Rhythmbox3.desktop"
@@ -437,6 +441,7 @@
   xdg.configFile."ghostty/config.ghostty" = lib.mkIf isDesktop {
     text = ''
       term = xterm-ghostty
+      shell-integration-features = sudo
 
       theme = Andromeda
 
