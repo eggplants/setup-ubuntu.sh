@@ -29,6 +29,7 @@
     feh vlc rhythmbox alsa-utils
     # GPU-accelerated apps wrapped with nixGL for Ubuntu
     (config.lib.nixGL.wrap pkgs.ghostty)
+    (config.lib.nixGL.wrap pkgs.mpv)
     (config.lib.nixGL.wrap pkgs.google-chrome)
     pkgs.gnomeExtensions.runcat
     pkgs.hackgen-nf-font
