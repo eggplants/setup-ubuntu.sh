@@ -6,6 +6,7 @@ path+=("$HOME/.config/Code/User/globalStorage/ms-vscode-remote.remote-containers
 
 export EDITOR=nano
 export DOCKER_HOST="unix://${XDG_RUNTIME_DIR:-/run/user/$UID}/docker.sock"
+export PINACT_KEYRING_ENABLED=true
 
 # Run wine with a Japanese locale
 function wine() {
