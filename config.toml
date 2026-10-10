@@ -17,6 +17,7 @@ uv = "latest"
 claude = "latest"
 pinact = "latest"
 "aqua:azu/dockerfile-pin" = "latest"
+"pipx:getjmanga" = "latest"
 
 [bootstrap.packages]
 "apt:build-essential" = "latest"

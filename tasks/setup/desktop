@@ -7,7 +7,7 @@ tmp="$(mktemp -d)"
 trap 'rm -rf "$tmp"' EXIT
 
 # HackGen NF font
-if ! fc-list | grep -q 'HackGen Console NF'; then
+if [[ -z "$(fc-list 'HackGen Console NF')" ]]; then
   url="$(
     curl -fsSL https://api.github.com/repos/yuru7/HackGen/releases/latest |
       jq -r '.assets[] | select(.name | test("^HackGen_NF_.*\\.zip$")) | .browser_download_url'

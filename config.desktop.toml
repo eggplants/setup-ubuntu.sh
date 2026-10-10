@@ -46,7 +46,7 @@ Signed-By: /etc/apt/keyrings/winehq.asc
 
 [bootstrap.linux.systemd.units.timidity]
 description = "TiMidity++ ALSA MIDI sequencer"
-exec_start = "/usr/bin/timidity -iAD"
+exec_start = "/usr/bin/timidity -iA"
 restart = "on-failure"
 
 [tasks.bootstrap]
