@@ -1,0 +1,109 @@
+[settings]
+ruby.compile = false
+
+[tools]
+python = "latest"
+ruby = "latest"
+node = "latest"
+go = "latest"
+rust = "latest"
+java = "21"
+maven = "latest"
+gh = "latest"
+jq = "latest"
+yt-dlp = "latest"
+uv = "latest"
+"pipx:getjump" = "latest"
+claude = "latest"
+pinact = "latest"
+"aqua:azu/dockerfile-pin" = "latest"
+
+[bootstrap.packages]
+"apt:build-essential" = "latest"
+"apt:curl" = "latest"
+"apt:wget" = "latest"
+"apt:git" = "latest"
+"apt:gnupg2" = "latest"
+"apt:pinentry-tty" = "latest"
+"apt:pass" = "latest"
+"apt:zsh" = "latest"
+"apt:zip" = "latest"
+"apt:unzip" = "latest"
+"apt:unar" = "latest"
+"apt:w3m" = "latest"
+"apt:aria2" = "latest"
+"apt:torsocks" = "latest"
+"apt:ffmpeg" = "latest"
+"apt:imagemagick" = "latest"
+"apt:pkg-config" = "latest"
+"apt:timidity" = "latest"
+"apt:docker-ce" = "latest"
+"apt:docker-ce-cli" = "latest"
+"apt:docker-ce-rootless-extras" = "latest"
+"apt:containerd.io" = "latest"
+"apt:docker-buildx-plugin" = "latest"
+"apt:docker-compose-plugin" = "latest"
+"apt:uidmap" = "latest"
+"apt:slirp4netns" = "latest"
+
+[bootstrap.directories."/etc/apt/keyrings"]
+mode = "0755"
+phase = "pre-packages"
+
+[bootstrap.files."/etc/apt/keyrings/docker.asc"]
+source = "files/apt/docker.asc"
+phase = "pre-packages"
+
+[bootstrap.files."/etc/apt/sources.list.d/docker.sources"]
+template = true
+phase = "pre-packages"
+content = """
+Types: deb
+URIs: https://download.docker.com/linux/ubuntu
+Suites: {{ exec(command=". /etc/os-release && echo ${UBUNTU_CODENAME:-$VERSION_CODENAME}") }}
+Components: stable
+Architectures: amd64
+Signed-By: /etc/apt/keyrings/docker.asc
+"""
+
+[bootstrap.files."/etc/sysctl.d/99-userns.conf"]
+content = "kernel.apparmor_restrict_unprivileged_userns=0\n"
+
+[bootstrap.services."docker.socket"]
+state = "stopped"
+enabled = false
+
+[bootstrap.services.docker]
+state = "stopped"
+enabled = false
+
+[bootstrap.repos]
+"~/.local/share/zsh/plugins/pure" = { url = "https://github.com/sindresorhus/pure" }
+"~/.local/share/zsh/plugins/zsh-autosuggestions" = { url = "https://github.com/zsh-users/zsh-autosuggestions" }
+"~/.local/share/zsh/plugins/zsh-syntax-highlighting" = { url = "https://github.com/zsh-users/zsh-syntax-highlighting" }
+"~/.local/share/zsh/plugins/zsh-history-substring-search" = { url = "https://github.com/zsh-users/zsh-history-substring-search" }
+"~/.local/share/nano-highlight" = { url = "https://github.com/serialhex/nano-highlight" }
+
+[dotfiles]
+"~/.zshenv" = { source = "dotfiles/zshenv" }
+"~/.zshrc" = { source = "dotfiles/zshrc" }
+"~/.gitconfig" = { source = "dotfiles/gitconfig" }
+"~/.nanorc" = { source = "dotfiles/nanorc" }
+"~/.gnupg/gpg-agent.conf" = { source = "dotfiles/gnupg/gpg-agent.conf", mode = "copy", permissions = "0600" }
+"~/.config/environment.d/50-mise.conf" = { source = "dotfiles/environment.d/50-mise.conf" }
+
+[bootstrap.mise_shell_activate]
+zsh = true
+bash = true
+
+[bootstrap.user]
+login_shell = "/usr/bin/zsh"
+
+[tasks.bootstrap]
+description = "Run imperative setup steps after the declarative bootstrap"
+run = [{ task = "setup:gpg" }, { task = "setup:git" }, { task = "setup:docker" }]
+
+[tasks."autoinstall:validate"]
+description = "Validate docs/autoinstall.yaml of the current checkout"
+dir = "{{ cwd }}"
+run = 'docker run --rm -v "$(git rev-parse --show-toplevel)/docs/autoinstall.yaml:/autoinstall.yaml" ghcr.io/eggplants/validate-ubuntu-autoinstall-docker /autoinstall.yaml -v'

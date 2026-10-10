@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+#MISE description="Set up rootless Docker as a systemd user service"
+set -euo pipefail
+
+# /etc/sysctl.d/99-userns.conf is written by [bootstrap.files]
+if [[ "$(sysctl -n kernel.apparmor_restrict_unprivileged_userns 2>/dev/null || echo 0)" != 0 ]]; then
+  sudo sysctl --system >/dev/null
+fi
+
+if [[ ! -f ~/.config/systemd/user/docker.service ]]; then
+  dockerd-rootless-setuptool.sh install
+fi

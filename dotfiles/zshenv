@@ -1,0 +1,13 @@
+# ~/.zshenv — managed by mise dotfiles (~/.config/mise/dotfiles/zshenv)
+
+typeset -U path PATH
+path=("$HOME/.local/bin" $path)
+path+=("$HOME/.config/Code/User/globalStorage/ms-vscode-remote.remote-containers/cli-bin")
+
+export EDITOR=nano
+export DOCKER_HOST="unix://${XDG_RUNTIME_DIR:-/run/user/$UID}/docker.sock"
+
+# Run wine with a Japanese locale
+function wine() {
+  LANG=ja_JP.UTF-8 command wine "$@"
+}

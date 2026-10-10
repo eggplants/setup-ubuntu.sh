@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+# First-login Wine prefix + RPG Maker 2000 RTP setup (XDG autostart).
+set -euo pipefail
+
+done_flag="$HOME/.local/share/.wine-rpg2000-done"
+[[ -f "$done_flag" ]] && exit 0
+command -v wine &>/dev/null || exit 0
+
+if [[ ! -d "$HOME/.wine" ]]; then
+  WINEARCH=wow64 wineboot --init
+fi
+
+for pkg in allfonts gmdls dmsynth directmusic dsound devenum fakejapanese_ipamona; do
+  winetricks -q "$pkg"
+done
+
+wine reg add \
+  'HKEY_CURRENT_USER\Software\Wine\AppDefaults\RPG_RT.exe\X11 Driver' \
+  /v ClientSideWithRender /t REG_SZ /d N /f
+
+tmp="$(mktemp -d)"
+trap 'rm -rf "$tmp"' EXIT
+cd "$tmp"
+wget -q https://tkool.jp/products/rtp/2000rtp.zip
+unzip -O sjis -j 2000rtp.zip '*.exe'
+LANG=ja_JP.UTF-8 wine RPG2000RTP.exe
+
+mkdir -p "$(dirname "$done_flag")"
+touch "$done_flag"

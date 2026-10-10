@@ -1,0 +1,31 @@
+# ~/.gitconfig — managed by mise dotfiles (~/.config/mise/dotfiles/gitconfig)
+# user.email and user.signingkey come from the GPG keyring and are written to
+# ~/.gitconfig.local by the setup:git task.
+
+[user]
+	name = eggplants
+[commit]
+	gpgSign = true
+[tag]
+	gpgSign = true
+[core]
+	editor = nano
+[gpg]
+	program = gpg
+[help]
+	autocorrect = 1
+[pull]
+	rebase = false
+[push]
+	autoSetupRemote = true
+[rebase]
+	autosquash = true
+[credential]
+	# https://github.com/microsoft/vscode-remote-release/issues/9252
+	helper =
+	helper = !/usr/bin/env gh auth git-credential
+[url "git@codeberg.org:"]
+	pushInsteadOf = git://codeberg.org/
+	pushInsteadOf = https://codeberg.org/
+[include]
+	path = ~/.gitconfig.local

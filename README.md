@@ -4,31 +4,32 @@
 
 ## Run
 
-Install [Ubuntu Desktop](https://ubuntu.com/download/desktop) with [`autoinstall.yaml`](./autoinstall.yaml)
+Install [Ubuntu Desktop](https://ubuntu.com/download/desktop) with [`autoinstall.yaml`](./docs/autoinstall.yaml)
 - <https://egpl.dev/setup-ubuntu.sh/autoinstall.yaml>
 
 Ref:
 - <https://canonical-subiquity.readthedocs-hosted.com/en/latest/reference/autoinstall-reference.html>
 - <https://raw.githubusercontent.com/canonical/subiquity/refs/heads/main/autoinstall-schema.json>
 
+`autoinstall.yaml` only installs `curl`/`git`, [mise](https://mise.jdx.dev), and clones this
+repository as `~/.config/mise`. Everything else is declared in the mise config
+([`mise bootstrap`](https://mise.jdx.dev/bootstrap.html) / [dotfiles](https://mise.jdx.dev/dotfiles.html)).
+
 After restarted:
 
 ```bash
 # Place your GPG secret key at ~/.sec.key, then:
-cd ~/.config/home-manager && ./bootstrap.sh
+~/.config/mise/bootstrap.sh
 ```
 
-## Update home-manager config
-
-Edit `home.nix` in `~/.config/home-manager/`, then:
+## Update
 
 ```bash
-hms
+mise bootstrap --dry-run
+mise bootstrap
+mise bootstrap --update
+mise bootstrap status
 ```
-
-## Legacy
-
-For Ubuntu 25.04 / 26.04: [`setup.ubuntu.sh`](./setup-ubuntu.sh)
 
 ## Family
 

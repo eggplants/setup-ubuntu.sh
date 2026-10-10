@@ -1,0 +1,50 @@
+#!/usr/bin/env bash
+#MISE description="Desktop setup: GNOME settings/extensions, fonts, VSCode extensions"
+set -euo pipefail
+
+config_dir="${XDG_CONFIG_HOME:-$HOME/.config}/mise"
+tmp="$(mktemp -d)"
+trap 'rm -rf "$tmp"' EXIT
+
+# HackGen NF font
+if ! fc-list | grep -q 'HackGen Console NF'; then
+  url="$(
+    curl -fsSL https://api.github.com/repos/yuru7/HackGen/releases/latest |
+      jq -r '.assets[] | select(.name | test("^HackGen_NF_.*\\.zip$")) | .browser_download_url'
+  )"
+  curl -fL --retry 3 -o "$tmp/hackgen.zip" "$url"
+  mkdir -p ~/.local/share/fonts/HackGen_NF
+  unzip -oj "$tmp/hackgen.zip" '*.ttf' -d ~/.local/share/fonts/HackGen_NF
+  fc-cache -f ~/.local/share/fonts
+fi
+
+# VSCode extensions
+if command -v code &>/dev/null; then
+  code --list-extensions | grep -qix ms-vscode-remote.remote-containers ||
+    code --install-extension ms-vscode-remote.remote-containers
+fi
+
+# GNOME needs a D-Bus session; run `mise run setup:desktop` again from a
+# graphical login if this was skipped.
+if [[ -z "${DBUS_SESSION_BUS_ADDRESS:-}" ]]; then
+  echo "setup:desktop: no D-Bus session; skipped GNOME settings" >&2
+  exit 0
+fi
+
+# GNOME Shell extensions (enabled by dconf below; takes effect after re-login)
+shell_version="$(gnome-shell --version | awk '{print $3}')"
+for uuid in runcat@kolesnikov.se caffeine@patapon.info; do
+  gnome-extensions list | grep -qx "$uuid" && continue
+  path="$(
+    curl -fsSL "https://extensions.gnome.org/extension-info/?uuid=$uuid&shell_version=$shell_version" |
+      jq -r .download_url
+  )"
+  curl -fL --retry 3 -o "$tmp/$uuid.zip" "https://extensions.gnome.org$path"
+  gnome-extensions install --force "$tmp/$uuid.zip"
+done
+
+dconf load / < "$config_dir/files/dconf/desktop.ini"
+
+if [[ "$(xdg-settings get default-web-browser 2>/dev/null)" != google-chrome.desktop ]]; then
+  xdg-settings set default-web-browser google-chrome.desktop
+fi

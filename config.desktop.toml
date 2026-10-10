@@ -1,0 +1,59 @@
+[bootstrap.packages]
+"apt:ibus-mozc" = "latest"
+"apt:fonts-noto-cjk" = "latest"
+"apt:network-manager-l2tp" = "latest"
+"apt:network-manager-l2tp-gnome" = "latest"
+"apt:pinentry-gnome3" = "latest"
+"apt:dconf-cli" = "latest"
+"apt:gnome-shell-extension-manager" = "latest"
+"apt:alsa-utils" = "latest"
+"apt:feh" = "latest"
+"apt:vlc" = "latest"
+"apt:mpv" = "latest"
+"apt:rhythmbox" = "latest"
+"apt:transmission-gtk" = "latest"
+"apt:ghostty" = "latest"
+"apt:google-chrome-stable" = "latest"
+"apt:code" = "latest"
+"apt:winehq-devel" = "latest"
+"apt:winetricks" = "latest"
+"apt:language-pack-ja" = "latest"
+
+[bootstrap.hooks]
+pre-packages = "bash {{ xdg_config_home }}/mise/scripts/install-vendor-debs.sh"
+
+[bootstrap.files."/etc/apt/keyrings/winehq.asc"]
+source = "files/apt/winehq.asc"
+phase = "pre-packages"
+
+[bootstrap.files."/etc/apt/sources.list.d/winehq.sources"]
+template = true
+phase = "pre-packages"
+content = """
+Types: deb
+URIs: https://dl.winehq.org/wine-builds/ubuntu
+Suites: {{ exec(command=". /etc/os-release && echo ${UBUNTU_CODENAME:-$VERSION_CODENAME}") }}
+Components: main
+Architectures: amd64 i386
+Signed-By: /etc/apt/keyrings/winehq.asc
+"""
+
+[dotfiles]
+"~/.config/ghostty/config.ghostty" = { source = "dotfiles/ghostty/config.ghostty" }
+"~/.config/wine/font-noaa.conf" = { source = "dotfiles/wine/font-noaa.conf" }
+"~/.local/bin/wine-rpg2000-setup" = { source = "dotfiles/wine/wine-rpg2000-setup" }
+"~/.config/autostart/wine-rpg2000-setup.desktop" = { source = "dotfiles/wine/wine-rpg2000-setup.desktop.tera", mode = "template" }
+
+[bootstrap.linux.systemd.units.timidity]
+description = "TiMidity++ ALSA MIDI sequencer"
+exec_start = "/usr/bin/timidity -iAD"
+restart = "on-failure"
+
+[tasks.bootstrap]
+description = "Run imperative setup steps after the declarative bootstrap"
+run = [
+  { task = "setup:gpg" },
+  { task = "setup:git" },
+  { task = "setup:docker" },
+  { task = "setup:desktop" },
+]

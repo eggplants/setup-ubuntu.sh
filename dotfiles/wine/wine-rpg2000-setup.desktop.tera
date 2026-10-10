@@ -1,0 +1,7 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Wine RPG2000 RTP Setup
+Exec={{ env.HOME }}/.local/bin/wine-rpg2000-setup
+X-GNOME-Autostart-enabled=true
+NoDisplay=true

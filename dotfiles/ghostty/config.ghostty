@@ -1,0 +1,63 @@
+term = xterm-ghostty
+shell-integration-features = sudo
+
+theme = Andromeda
+
+font-family = HackGen Console NF
+font-size = 11
+
+font-thicken = true
+font-thicken-strength = 1
+
+font-style-bold = false
+font-style-italic = false
+font-style-bold-italic = false
+
+adjust-cell-width = -1
+adjust-cell-height = 2
+
+cursor-style = block
+cursor-style-blink = false
+cursor-invert-fg-bg = true
+cursor-opacity = 0.8
+
+mouse-hide-while-typing = true
+resize-overlay = never
+
+keybind = ctrl+shift+f=start_search
+
+keybind = ctrl+f2=new_split:right
+keybind = f2+shift=new_split:down
+
+keybind = shift+arrow_up=goto_split:up
+keybind = shift+arrow_down=goto_split:down
+keybind = shift+arrow_left=goto_split:left
+keybind = shift+arrow_right=goto_split:right
+
+keybind = alt+shift+arrow_up=resize_split:up,10
+keybind = alt+shift+arrow_down=resize_split:down,10
+keybind = alt+shift+arrow_left=resize_split:left,10
+keybind = alt+shift+arrow_right=resize_split:right,10
+
+keybind = f2=new_tab
+
+keybind = f3=previous_tab
+keybind = f4=next_tab
+
+keybind = alt+digit_1=goto_tab:1
+keybind = alt+1=goto_tab:1
+keybind = alt+digit_2=goto_tab:2
+keybind = alt+2=goto_tab:2
+keybind = alt+digit_3=goto_tab:3
+keybind = alt+3=goto_tab:3
+keybind = alt+digit_4=goto_tab:4
+keybind = alt+4=goto_tab:4
+keybind = alt+digit_5=goto_tab:5
+keybind = alt+5=goto_tab:5
+keybind = alt+digit_6=goto_tab:6
+keybind = alt+6=goto_tab:6
+keybind = alt+digit_7=goto_tab:7
+keybind = alt+7=goto_tab:7
+keybind = alt+digit_8=goto_tab:8
+keybind = alt+8=goto_tab:8
+keybind = alt+9=last_tab

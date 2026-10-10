@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+#MISE description="Write user.email/signingkey from GPG to ~/.gitconfig.local and log in to gh"
+#MISE raw=true
+set -euo pipefail
+
+if gpg --list-secret-keys 2>/dev/null | grep -q '^sec'; then
+  key="$(gpg --list-secret-keys | tac | grep -m1 -B1 '^sec' | head -1 | awk '$0=$1')"
+  email="$(gpg --list-keys | grep -Em1 '^uid' | rev | cut -f1 -d' ' | tr -d '<>' | rev)"
+  git config --file ~/.gitconfig.local user.signingkey "$key"
+  git config --file ~/.gitconfig.local user.email "$email"
+else
+  echo "setup:git: no GPG secret key; skipped user.email/user.signingkey" >&2
+fi
+
+gh auth status --hostname github.com &>/dev/null ||
+  gh auth login --hostname github.com --git-protocol https --web

@@ -18,6 +18,7 @@ autoinstall:
       name: lvm
       sizing-policy: all
       encrypt: false
+      # encrypt: true
       # password: "CHANGE_ME_LUKS_PASSPHRASE" # change with plain password
 
   identity:
@@ -45,20 +46,11 @@ autoinstall:
 
 
   shutdown: reboot
+  # After the first login, run: ~/.config/mise/bootstrap.sh
   late-commands:
     - curtin in-target -- apt-get update -y
-    - curtin in-target -- apt-get install -y                                
-        alsa-utils build-essential curl fonts-noto-cjk git gnupg2
-        ibus-mozc language-pack-ja language-pack-ja-base                    
-        network-manager-l2tp network-manager-l2tp-gnome                     
-        pass pinentry-tty pkg-config uidmap zip unzip zsh
-    - curtin in-target -- install -m 0755 -d /etc/apt/keyrings
-    - curtin in-target -- chsh -s /usr/bin/zsh eggplants
-    - |
-      # Install Qfinder Pro
-      curtin in-target -- bash -c 'curl -s '\''https://eu1.qnap.com/Liveupdate/SoftwareRelease.xml'\'' | grep -oEm1 '\''http://[^"]+/QNAPQfinderProUbuntux64[^"]+\.deb'\'' | xargs curl -Lo /tmp/qfinder.deb'
-      curtin in-target -- apt-get install -y /tmp/qfinder.deb
-      curtin in-target -- rm -f /tmp/qfinder.deb
-    - curtin in-target -- su - eggplants -c 'git clone https://github.com/eggplants/setup-ubuntu.sh /home/eggplants/.config/home-manager'
+    - curtin in-target -- apt-get install -y ca-certificates curl git
+    - curtin in-target -- su - eggplants -c 'curl -fsSL https://mise.run | sh'
+    - curtin in-target -- su - eggplants -c 'git clone https://github.com/eggplants/setup-ubuntu.sh ~/.config/mise'
     - curtin in-target -- apt-get autoremove -y
-    - curtin in-target -- apt-get autoclean -y        
+    - curtin in-target -- apt-get autoclean -y
