@@ -26,10 +26,8 @@ install_deb code \
 
 # QNAP Qfinder Pro (no apt repository)
 if ! dpkg-query -W -f='${Status}' qfinderpro 2>/dev/null | grep -q 'ok installed'; then
-  url="$(
-    curl -fsSL 'https://eu1.qnap.com/Liveupdate/SoftwareRelease.xml' |
-      grep -oEm1 'https?://[^"<]+/QNAPQfinderProUbuntux64[^"<]+\.deb'
-  )"
+  curl -fsSL -o "$tmp/release.xml" 'https://eu1.qnap.com/Liveupdate/SoftwareRelease.xml'
+  url="$(grep -oEm1 'https?://[^"<]+/QNAPQfinderProUbuntux64[^"<]+\.deb' "$tmp/release.xml")"
   curl -fL --retry 3 -o "$tmp/qfinder.deb" "$url"
   sudo env DEBIAN_FRONTEND=noninteractive apt-get install -y "$tmp/qfinder.deb"
 fi
