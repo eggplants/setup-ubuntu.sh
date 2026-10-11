@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#MISE description="Desktop setup: GNOME settings/extensions, fonts, VSCode extensions"
+#MISE description="Desktop setup: GNOME settings/extensions, fonts, AppManager, VSCode extensions"
 set -euo pipefail
 
 config_dir="${XDG_CONFIG_HOME:-$HOME/.config}/mise"
@@ -16,6 +16,18 @@ if [[ -z "$(fc-list 'HackGen Console NF')" ]]; then
   mkdir -p ~/.local/share/fonts/HackGen_NF
   unzip -oj "$tmp/hackgen.zip" '*.ttf' -d ~/.local/share/fonts/HackGen_NF
   fc-cache -f ~/.local/share/fonts
+fi
+
+# AppManager: self-managed in ~/Applications (it moves itself there and owns
+# its .desktop entry and updates), so install it with its own CLI.
+if [[ ! -x ~/Applications/AppManager ]]; then
+  url="$(
+    curl -fsSL https://api.github.com/repos/kem-a/AppManager/releases/latest |
+      jq -r '.assets[] | select(.name | test("-anylinux-x86_64\\.AppImage$")) | .browser_download_url'
+  )"
+  curl -fL --retry 3 -o "$tmp/AppManager.AppImage" "$url"
+  chmod +x "$tmp/AppManager.AppImage"
+  "$tmp/AppManager.AppImage" install "$tmp/AppManager.AppImage"
 fi
 
 # VSCode extensions
