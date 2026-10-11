@@ -28,7 +28,7 @@ mise run autoinstall:validate   # run inside a checkout of this repo
 | `dotfiles/` | `[dotfiles]` sources (symlinked unless the entry says otherwise) |
 | `files/apt/` | Vendor apt signing keys (Docker, WineHQ) |
 | `files/dconf/desktop.ini` | GNOME settings, loaded by `setup:desktop` |
-| `tasks/setup/` | File tasks run by the `bootstrap` task: `gpg`, `git`, `docker`, `desktop` |
+| `tasks/setup/` | File tasks run by the `bootstrap` task: `gpg`, `git`, `docker`, `claude`, `desktop` |
 | `scripts/install-vendor-debs.sh` | Desktop `pre-packages` hook: i386 arch, Chrome / VSCode / Qfinder `.deb` |
 | `bootstrap.sh` | Installs mise, clones this repo, writes `miserc.local.toml`, runs `mise bootstrap` |
 | `docs/autoinstall.yaml` | Ubuntu unattended-install seed file (served via GitHub Pages) |

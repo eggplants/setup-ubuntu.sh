@@ -55,5 +55,6 @@ run = [
   { task = "setup:gpg" },
   { task = "setup:git" },
   { task = "setup:docker" },
+  { task = "setup:claude" },
   { task = "setup:desktop" },
 ]

@@ -18,6 +18,7 @@ claude = "latest"
 pinact = "latest"
 "aqua:azu/dockerfile-pin" = "latest"
 "pipx:getjmanga" = "latest"
+"pipx:claude-statusbar" = "latest"
 
 [bootstrap.packages]
 "apt:build-essential" = "latest"
@@ -102,7 +103,7 @@ login_shell = "/usr/bin/zsh"
 
 [tasks.bootstrap]
 description = "Run imperative setup steps after the declarative bootstrap"
-run = [{ task = "setup:gpg" }, { task = "setup:git" }, { task = "setup:docker" }]
+run = [{ task = "setup:gpg" }, { task = "setup:git" }, { task = "setup:docker" }, { task = "setup:claude" }]
 
 [tasks."autoinstall:validate"]
 description = "Validate docs/autoinstall.yaml of the current checkout"
