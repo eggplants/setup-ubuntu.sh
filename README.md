@@ -1,4 +1,4 @@
-# My setup for Ubuntu Desktop
+# Moved 👉 [`eggplants/mise-bootstrap`](https://github.com/eggplants/mise-bootstrap)
 
 [![Validate autoinstall.yaml](https://github.com/eggplants/setup-ubuntu.sh/actions/workflows/validate-autoinstall.yml/badge.svg)](https://github.com/eggplants/setup-ubuntu.sh/actions/workflows/validate-autoinstall.yml)
 
