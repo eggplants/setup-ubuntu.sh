@@ -18,8 +18,8 @@ export GPG_TTY
 gpgconf --kill gpg-agent
 gpg --import ~/.sec.key
 
-gpg --list-keys --with-keygrip | grep -FA1 '[SA]' |
-  awk -F 'Keygrip = ' '$0=$2' > ~/.gnupg/sshcontrol
+gpg --with-colons --with-keygrip --list-secret-keys |
+  awk -F: '$1=="sec"||$1=="ssb"{auth=($12~/a/)} $1=="grp"&&auth{print $10; auth=0}' > ~/.gnupg/sshcontrol
 chmod 600 ~/.gnupg/sshcontrol
 gpg-connect-agent updatestartuptty /bye >/dev/null
 
